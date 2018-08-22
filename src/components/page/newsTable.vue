@@ -12,38 +12,38 @@
                 <el-table-column type="expand">
                     <template slot-scope="props">
                         <el-form label-position="left" inline class="demo-table-expand">
-                            <el-form-item label="银行名称">
-                                <span>{{ props.row.Name}}</span>
+                            <el-form-item label="作者">
+                                <span>{{ props.row.PublishPerson}}</span>
                             </el-form-item>
                             <el-form-item label="Guid ID">
                                 <span>{{ props.row.Guid }}</span>
                             </el-form-item>
-                            <el-form-item label="Enable">
+                            <el-form-item label="是否可用">
                                 <span>{{ props.row.Enable }}</span>
                             </el-form-item>
-                            <el-form-item label="Recommend">
-                                <span>{{ props.row.Recommend }}</span>
+                            <el-form-item label="发布时间">
+                                <span>{{ props.row.PublishDate|TimeFormat }}</span>
                             </el-form-item>
-                            <el-form-item label="手机号码">
-                                <span>{{ props.row.Tel }}</span>
+                            <el-form-item label="内容分类">
+                                <span>{{ props.row.Type|typeChange }}</span>
                             </el-form-item>
-                            <el-form-item label="银行描述">
-                                <span>{{ props.row.Description }}</span>
-                            </el-form-item>
-                            <el-form-item label="银行图标">
+                            <el-form-item label="图片">
                                 <img class="userPhoto" :src="`http://api.getcard.cn${props.row.Url}`">
+                            </el-form-item>
+                            <el-form-item label="内容" class="mystyle" style="display: block;width:100%">
+                                <div>{{ props.row.Content }}</div>
                             </el-form-item>
                         </el-form>
                     </template>
                 </el-table-column>
-                <el-table-column prop="CreateTime" label="创建日期" sortable width="150">
+                <el-table-column prop="PublishDate" label="创建日期" sortable width="150">
                     <template slot-scope="scope">
-                        <span>{{scope.row.CreateTime|TimeFormat}}</span>
+                        <span>{{scope.row.PublishDate|TimeFormat}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="Name" label="银行名称" width="120">
+                <el-table-column prop="PublishPerson" label="作者" width="120">
                 </el-table-column>
-                <el-table-column prop="Tel" label="银行电话号码">
+                <el-table-column prop="Title" label="文章标题">
                 </el-table-column>
                 <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
@@ -58,25 +58,21 @@
             </div>
         </div>
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%" :before-close="beforeCloae">
-            <el-dialog title="上传银行图标" :append-to-body='true' :visible.sync="upimgVisible" width="300px" center>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="upimgVisible = false">取 消</el-button>
-                <el-button type="primary" @click="uploadFiles">确 定</el-button>
-            </span>
-            </el-dialog>
+        <el-dialog :title="form.Btn==1?'添加':'编辑'" :visible.sync="editVisible" width="60%" :before-close="beforeCloae">
             <el-form ref="form" :model="form" label-width="75px">
-                <el-form-item label="银行名称">
-                    <el-input v-model="form.Name"></el-input>
+                <el-form-item label="文章标题">
+                    <el-input v-model="form.Title"></el-input>
                 </el-form-item>
-                <el-form-item label="银行电话">
-                    <el-input v-model="form.Tel"></el-input>
+                <el-form-item label="作者">
+                    <el-input v-model="form.PublishPerson"></el-input>
                 </el-form-item>
-                <el-form-item label="银行描述">
-                    <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="form.Description">
-                    </el-input>
+                <el-form-item label="文章类型">
+                    <el-select v-model="value" placeholder="请选择" @change="changeType">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="银行图标">
+                <el-form-item label="banner图" v-if="showBanner">
                     <div v-if="form.Btn=='1'">
                         <div v-if="showImg">
                             <el-upload :file-list="fileList" :class="{disabled:disabledflag}" ref='upload' action="" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :auto-upload='false' :multiple='false' :limit="1" :http-request="uploadFiles" accept="image/jpeg,image/gif,image/png" :on-change='changeUpload'>
@@ -98,19 +94,14 @@
                         </el-input>
                     </div>
                 </el-form-item>
-                <!--       <el-form-item label="银行图标">
-                    <el-upload ref='upload' :auto-upload='false' id='innerupImg' :file-list="fileList" :multiple='false' :limit="1" :on-exceed="handleExceed" :http-request="uploadFiles" accept="image/jpeg,image/gif,image/png" action='' :on-change='changeUpload'>
-                        <el-button slot="trigger" size="mini" type="primary">选取图片</el-button>
-                    </el-upload>
-                    <el-button size="mini" @click="uploadFiles" type="primary">上传银行图标</el-button>
-                </el-form-item> -->
-                <el-form-item label="推荐">
-                    <el-switch v-model="form.Recommend" @change="changeRecommend" active-color="#13ce66" inactive-color="#ff4949">
-                    </el-switch>
-                </el-form-item>
-                <el-form-item label="Enable">
+                <el-form-item label="是否可用">
                     <el-switch v-model="form.Enable" active-color="#13ce66" inactive-color="#ff4949">
                     </el-switch>
+                </el-form-item>
+                <el-form-item label="新闻内容">
+                    <div class="container">
+                        <quill-editor ref="myTextEditor" v-model="form.Content" :options="editorOption"></quill-editor>
+                    </div>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -134,24 +125,28 @@ console.log(this)
 
 </script>
 <script>
-import vuetable from '../../../static/vuetable.json'
-// import layer from 'vue-layer'
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
+import { quillEditor } from 'vue-quill-editor';
 import moment from 'moment';
 export default {
     name: 'basetable',
     data() {
         return {
+
+            //图片上传
             showImgUrl: false,
             showImg: true,
-
-            //111
-            dialogImageUrl: '',
-            upimgVisible: false,
-            totalNum: 0,
-            url: './static/vuetable.json',
-            tableData: [],
             fileList: [],
-            uploadImgUrl: `${this.baseUrl}/api/UploadImgs/UploadBank`,
+            disabledflag: false, //隐藏上传框
+            dialogImageUrl: '',
+            content: '',
+            editorOption: {
+                placeholder: 'Hello World'
+            },
+            totalNum: 0,
+            tableData: [],
             cur_page: 0,
             multipleSelection: [],
             select_cate: '',
@@ -160,24 +155,39 @@ export default {
             is_search: false,
             editVisible: false,
             delVisible: false,
-            Recommend: true,
-            deleteBankId: '',
-            disabledflag: false, //隐藏上传框
+            options: [{
+                value: 0,
+                label: '攻略'
+            }, {
+                value: 1,
+                label: '常见问题'
+            }, {
+                value: 2,
+                label: '公告'
+            }, {
+                value: 3,
+                label: 'banner'
+            }, {
+                value: 4,
+                label: '发现'
+            }, ],
+            value: 0,
             form: {
                 Guid: "",
-                Name: "",
-                Description: "",
+                Title: '',
+                PublishPerson: "",
+                Content: "",
                 Url: '',
-                Tel: "",
                 CreateTime: new Date(),
-                Recommend: true,
                 Enable: true,
-                Url: "",
-                Btn: '1' //识别是点击添加还是编辑1=添加；2=编辑
+                Type: 0,
+                Btn: '' //识别是点击添加还是编辑1=添加；2=编辑
             },
-            uploadUrl: `${this.baseUrl}/api/UploadImgs/UploadBank`,
             idx: -1
         }
+    },
+    components: {
+        quillEditor
     },
     created() {
         this.getUserList()
@@ -186,36 +196,33 @@ export default {
     mounted() {
 
     },
+    computed: {
+        showBanner() {
+            if (this.form.Type == 3) {
+                return true
+            } else {
+                return false
+            }
+        },
+    },
     filters: {
         TimeFormat(val) {
             let Time = moment(val).format('YYYY-MM-DD')
             return Time;
+        },
+        typeChange(val) {
+            if (val == 0) {
+                return "攻略"
+            } else if (val == 1) {
+                return "常见问题"
+            } else if (val == 3) {
+                return "公告"
+            } else {
+                return "banner"
+            }
         }
     },
     methods: {
-        handleRemove(file, fileList) {
-            if (fileList.length == 0) {
-                this.disabledflag = false;
-            }
-        },
-        beforeCloae() {
-            this.showImg = true;
-            this.showImgUrl = false;
-            this.editVisible = false;
-            this.dialogImageUrl = '';
-        },
-        handlePictureCardPreview(file) {
-            console.log()
-            this.dialogImageUrl = file.url;
-            console.log("-----", file, this.dialogImageUrl)
-        },
-        changeRecommend() {
-
-        },
-        showUpimg() {
-
-        },
-        //上传图片
         uploadFiles() {
             var that = this;
             let file = this.$refs.upload.$refs['upload-inner'].$refs.input; //获取文件数据
@@ -264,22 +271,49 @@ export default {
             //     this.disabledflag = false
             // }
         },
+        handleRemove(file, fileList) {
+            if (fileList.length == 0) {
+                this.disabledflag = false;
+            }
+        },
+        beforeCloae() {
+            this.showImg = true;
+            this.showImgUrl = false;
+            this.editVisible = false;
+            this.dialogImageUrl = '';
+        },
+        handlePictureCardPreview(file) {
+            console.log()
+            this.dialogImageUrl = file.url;
+            this.dialogVisible1 = true;
+            console.log("-----", file, this.dialogImageUrl)
+        },
+        onEditorChange({ editor, html, text }) {
+            this.form.Content = html;
+            console.log(this.content);
+        },
+        submit() {
+            console.log(this.content);
+            this.$message.success('提交成功！');
+        },
+        changeType(val) {
+            this.form.Type = val;
+            console.log(val)
+        },
         //添加
         addBank() {
             this.form = {
-                Guid: "",
-                Name: "",
-                Description: "",
-                Tel: "",
-                Url: '',
-                CreateTime: new Date(),
-                Recommend: false,
-                Enable: false,
-                Url: "",
-                Btn: '1'
-            }
-            this.editVisible = true;
-            this.dialogImageUrl = ''
+                    Guid: '',
+                    Title: '',
+                    PublishPerson: '',
+                    Content: '',
+                    CreateTime: new Date(),
+                    Enable: true,
+                    Type: 0,
+                    Url: '',
+                    Btn: 1
+                },
+                this.editVisible = true;
         },
         // 分页导航
         handleCurrentChange(val) {
@@ -287,7 +321,7 @@ export default {
             console.log(this.cur_page)
             this.getUserList();
         },
-        //获取用户列表
+        //获取新闻列表
         getUserList() {
             let vm = this
             let value = {
@@ -295,7 +329,7 @@ export default {
                 pageSize: 10
             }
             console.log(value)
-            this.$axios.post(`${this.baseUrl}/api/Bank/GetBankListForAdmin`, this.$qs.stringify(value))
+            this.$axios.post(`${this.baseUrl}/api/Announcenment/GetAnnouncenmentList`, this.$qs.stringify(value))
                 .then((res) => {
                     console.log(res.data)
                     this.tableData = res.data.Data;
@@ -310,9 +344,9 @@ export default {
             let value = {
                 pageNo: this.cur_page,
                 pageSize: 10,
-                Name: this.select_word
+                Title: this.select_word
             }
-            this.$axios.post(`${this.baseUrl}/api/Bank/GetBankListForAdmin`, this.$qs.stringify(value))
+            this.$axios.post(`${this.baseUrl}/api/Announcenment/GetAnnouncenmentList`, this.$qs.stringify(value))
                 .then((res) => {
                     console.log(res.data)
                     this.tableData = res.data.Data;
@@ -327,18 +361,17 @@ export default {
             this.idx = index;
             this.form = {
                 Guid: row.Guid,
-                Name: row.Name,
-                Description: row.Description,
-                Tel: row.Tel,
-                Url: row.Url,
+                Title: row.Title,
+                PublishPerson: row.PublishPerson,
+                Content: row.Content,
                 CreateTime: new Date(),
-                Recommend: row.Recommend,
-                Enable: row.Enable,
+                Enable: true,
                 Url: row.Url,
-                Btn: '2'
+                Type: row.Type ? row.Type : 0,
+                Btn: 2 //识别是点击添加还是编辑1=添加；2=编辑
             }
+            this.value = row.Type
             this.showImgUrl = true;
-            this.dialogImageUrl = '';
             this.editVisible = true;
         },
         handleDelete(index, row) {
@@ -361,8 +394,10 @@ export default {
         // 保存编辑
         saveEdit() {
             console.log(this.form)
-            if (this.form.Btn == '2') {
-                this.$axios.post(`${this.baseUrl}/api/Bank/UpdateBank`, this.$qs.stringify(this.form))
+            if (this.form.Btn == 2) {
+                delete this.form.Btn
+                delete this.form.CreateTime
+                this.$axios.post(`${this.baseUrl}/api/Announcenment/UpdateAnnoucenment`, this.$qs.stringify(this.form))
                     .then((res) => {
                         if (res.data.Success == true) {
                             console.log(res.data)
@@ -377,7 +412,7 @@ export default {
             } else {
                 delete this.form.Btn
                 delete this.form.Guid
-                this.$axios.post(`${this.baseUrl}/api/Bank/AddBank`, this.$qs.stringify(this.form))
+                this.$axios.post(`${this.baseUrl}/api/Announcenment/AddNewAnnouncenment`, this.$qs.stringify(this.form))
                     .then((res) => {
                         if (res.data.Success == true) {
                             console.log(res.data)
@@ -416,13 +451,7 @@ export default {
 
 </script>
 <style lang="less">
-#innerupImg {
-    .el-upload--text {
-        width: 250px;
-    }
-}
 .bankTable {
-
     .disabled .el-upload--picture-card {
         display: none;
     }
@@ -451,6 +480,9 @@ export default {
         margin-right: 0;
         margin-bottom: 0;
         width: 50%;
+    }
+    .bankTable .demo-table-expand .mystyle {
+        width: 100%;
     }
     .handle-select {
         width: 120px;

@@ -1,56 +1,82 @@
 <template>
-  <div class="error-page">
-      <div class="error-code">4<span>0</span>3</div>
-      <div class="error-desc">啊哦~ 你没有权限访问该页面哦</div>
-      <div class="error-handle">
-          <router-link to="/">
-            <el-button type="primary" size="large">返回首页</el-button>
-          </router-link>
-          <el-button class="error-btn" type="primary" size="large" @click="goBack">返回上一页</el-button>
-      </div>
-  </div>
+    <div class="error-page">
+        <div class="outerDiv" style="display:flex; margin-bottom: -15px">
+            <div v-for="(item,index) in timeArr" :class="`timeInner${index} timeInner`" @click="choseTime(item,index)">
+                <div style="" class="boxList">
+                    <div style="" :class="`blue${index} box`"></div>
+                    <div :class="`timeText${index} timeText`" style="">{{item}}:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
-
 <script>
 export default {
-  methods: {
-      goBack(){
-          this.$router.go(-1);
-      }
-  }
+    data() {
+        return {
+            timeArr: [],
+        }
+    },
+    methods: {
+        choseTime(item, index) {
+            console.log(item, index)
+        }
+    },
+    created() {
+        for (let i = 9; i <= 21; i++) {
+            this.timeArr.push(i)
+        }
+    },
 }
+
 </script>
-
-
-<style scoped>
-    .error-page{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
+<style lang="less">
+.error-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
+    margin: 0 auto;
+    height: 100%;
+    background: #f3f3f3;
+    box-sizing: border-box;
+    .outerDiv {
         width: 100%;
-        height: 100%;
-        background: #f3f3f3;
-        box-sizing: border-box;
+        .timeInner {
+            display: flex;
+            width: 8%;
+            margin-right: 2px;
+        }
+        .timeInner12 {
+            width: 1px;
+        }
+        .boxList {
+            width: 100%;
+            padding-right: 1px; // position: absolute;
+            .box {
+                width: 100%;
+                height: 25px;
+                background-color: #00a8d7;
+                margin-right: 1px;
+            }
+            .timeText {
+                font-size: 12px;
+                transform: scale(0.8);
+                -webkit-transform: scale(0.8);
+                margin-right: 20px;
+                position: relative;
+                left: -17px;
+            }
+            .timeText0 {
+                position: relative;
+                left: -11px;
+            }
+        }
+
+        .blue0 {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
     }
-    .error-code{
-        line-height: 1;
-        font-size: 250px;
-        font-weight: bolder;
-        color: #f02d2d;
-    }
-    .error-code span{
-        color: #00a854;
-    }
-    .error-desc{
-        font-size: 30px;
-        color: #777;
-    }
-    .error-handle{
-        margin-top: 30px;
-        padding-bottom: 200px;
-    }
-    .error-btn{
-        margin-left: 100px;
-    }
-</style>
+}

@@ -23,13 +23,18 @@ export default new Router({
                     meta: { title: '管理员权限管理' }
                 },
                 {
+                    path: '/changePassword',
+                    component: resolve => require(['../components/page/changePw.vue'], resolve),
+                    meta: { title: '修改密码' }
+                },
+                {
                     path: '/logManage',
                     component: resolve => require(['../components/page/BaseTable.vue'], resolve),
                     meta: { title: '日志管理' }
                 },
                 {
                     path: '/creditCard',
-                    component: resolve => require(['../components/page/BaseTable.vue'], resolve),
+                    component: resolve => require(['../components/page/cardsTable.vue'], resolve),
                     meta: { title: '银行卡管理' }
                 },
                 {
@@ -41,6 +46,11 @@ export default new Router({
                     path: '/userManage',
                     component: resolve => require(['../components/page/userTable.vue'], resolve),
                     meta: { title: '用户管理' }
+                },
+                {
+                    path: '/newsTable',
+                    component: resolve => require(['../components/page/newsTable.vue'], resolve),
+                    meta: { title: '新闻管理' }
                 },
                 {
                     path: '/tabs',
@@ -108,3 +118,20 @@ export default new Router({
         }
     ]
 })
+// router.beforeEach((to, from, next) => {
+//     // console.log('to:' + to.path)
+//     if (to.path.startsWith('/login')) {
+//         window.localStorage.clear()
+//         next()
+//     } else {
+//         const role = localStorage.getItem('ms_username');
+//         const Guid = localStorage.getItem('ms_Guid');
+//         if (!role && !ms_Guid) {
+//             next({
+//                 path: '/login'
+//             })
+//         } else {
+//             next()
+//         }
+//     }
+// })

@@ -2,12 +2,12 @@
     <div class="table">
         <div class="container">
             <div class="handle-box">
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+                <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
                 <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
             </div>
             <el-table :data="tableData" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55"></el-table-column>
+                <!-- <el-table-column type="selection" width="55"></el-table-column> -->
                 <el-table-column type="expand">
                     <template slot-scope="props">
                         <el-form label-position="left" inline class="demo-table-expand">
@@ -29,9 +29,6 @@
                             <el-form-item label="手机号码">
                                 <span>{{ props.row.PhoneNumber }}</span>
                             </el-form-item>
-                            <el-form-item label="用户头像">
-                                <img class="userPhoto" :src="props.row.UserPhotos.length>0?props.row.UserPhotos[0].Url:''">
-                            </el-form-item>
                         </el-form>
                     </template>
                 </el-table-column>
@@ -44,9 +41,14 @@
                 </el-table-column>
                 <el-table-column prop="Email" label="邮箱">
                 </el-table-column>
+                <el-table-column label="用户头像">
+                    <template slot-scope="scope">
+                        <img class="userPhoto" :src="scope.row.UserPhotos|photoImg">
+                    </template>
+                </el-table-column>
                 <el-table-column prop="PhoneNumber" label="手机号">
                 </el-table-column>
-                <el-table-column label="操作" width="180">
+                <el-table-column label="操作" width="180" v-if="false">
                     <template slot-scope="scope">
                         <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                         <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -143,6 +145,15 @@ export default {
         TimeFormat(val) {
             let Time = moment(val).format('YYYY-MM-DD')
             return Time;
+        },
+        photoImg(val) {
+            console.log(val)
+            if (val.length > 0) {
+                return `http://api.getcard.cn${val[0].Url}`
+            } else {
+                return ''
+            }
+
         }
     },
     methods: {

@@ -15,7 +15,7 @@
                             <div class="user-info-list">上次登录时间：<span>{{nowTime}}</span></div>
                             <div class="user-info-list">上次登录地点：<span>杭州</span></div>
                         </el-card>
-                        <el-card shadow="hover">
+                        <!-- <el-card shadow="hover">
                             <div slot="header" class="clearfix">
                                 <span>语言详情</span>
                             </div>
@@ -27,7 +27,7 @@
                             <el-progress :percentage="11.9"></el-progress>
                             other
                             <el-progress :percentage="1.1" color="#f56c6c"></el-progress>
-                        </el-card>
+                        </el-card> -->
                     </el-col>
                 </el-row>
             </el-col>
@@ -91,160 +91,155 @@
                         </el-table-column>
                     </el-table>
                 </el-card>
-
             </el-col>
         </el-row>
     </div>
 </template>
-
 <script>
-    import moment from 'moment'
-    export default {
-        name: 'dashboard',
-        data() {
-            return {
-                nowTime:moment(new Date()).format('MMMM Do YYYY, h:mm:ss a'),
-                name: localStorage.getItem('ms_username'),
-                todoList: [
-                    {
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
-                    {
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
-                    {
-                        title: '今天要写100行代码加几个bug吧',
-                        status: false,
-                    }, {
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
-                    {
-                        title: '今天要修复100个bug',
-                        status: true,
-                    },
-                    {
-                        title: '今天要写100行代码加几个bug吧',
-                        status: true,
-                    }
-                ]
-            }
-        },
-        computed: {
-            role() {
-                return this.name === 'admin' ? '超级管理员' : '普通用户';
-            }
+import moment from 'moment'
+export default {
+    name: 'dashboard',
+    data() {
+        return {
+            nowTime: moment(new Date()).format('MMMM Do YYYY, h:mm:ss a'),
+            name: localStorage.getItem('ms_username'),
+            todoList: [{
+                    title: '今天要修复100个bug',
+                    status: false,
+                },
+                {
+                    title: '今天要修复100个bug',
+                    status: false,
+                },
+                {
+                    title: '今天要写100行代码加几个bug吧',
+                    status: false,
+                }, {
+                    title: '今天要修复100个bug',
+                    status: false,
+                },
+                {
+                    title: '今天要修复100个bug',
+                    status: true,
+                },
+                {
+                    title: '今天要写100行代码加几个bug吧',
+                    status: true,
+                }
+            ]
+        }
+    },
+    computed: {
+        role() {
+            return this.name === 'admin' ? '超级管理员' : '普通用户';
         }
     }
+}
 
 </script>
-
-
 <style scoped>
-    .el-row {
-        margin-bottom: 20px;
-    }
+.el-row {
+    margin-bottom: 20px;
+}
 
-    .grid-content {
-        display: flex;
-        align-items: center;
-        height: 100px;
-    }
+.grid-content {
+    display: flex;
+    align-items: center;
+    height: 100px;
+}
 
-    .grid-cont-right {
-        flex: 1;
-        text-align: center;
-        font-size: 12px;
-        color: #999;
-    }
+.grid-cont-right {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+}
 
-    .grid-num {
-        font-size: 30px;
-        font-weight: bold;
-    }
+.grid-num {
+    font-size: 30px;
+    font-weight: bold;
+}
 
-    .grid-con-icon {
-        font-size: 50px;
-        width: 100px;
-        height: 100px;
-        text-align: center;
-        line-height: 100px;
-        color: #fff;
-    }
+.grid-con-icon {
+    font-size: 50px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    line-height: 100px;
+    color: #fff;
+}
 
-    .grid-con-1 .grid-con-icon {
-        background: rgb(45, 140, 240);
-    }
+.grid-con-1 .grid-con-icon {
+    background: rgb(45, 140, 240);
+}
 
-    .grid-con-1 .grid-num {
-        color: rgb(45, 140, 240);
-    }
+.grid-con-1 .grid-num {
+    color: rgb(45, 140, 240);
+}
 
-    .grid-con-2 .grid-con-icon {
-        background: rgb(100, 213, 114);
-    }
+.grid-con-2 .grid-con-icon {
+    background: rgb(100, 213, 114);
+}
 
-    .grid-con-2 .grid-num {
-        color: rgb(45, 140, 240);
-    }
+.grid-con-2 .grid-num {
+    color: rgb(45, 140, 240);
+}
 
-    .grid-con-3 .grid-con-icon {
-        background: rgb(242, 94, 67);
-    }
+.grid-con-3 .grid-con-icon {
+    background: rgb(242, 94, 67);
+}
 
-    .grid-con-3 .grid-num {
-        color: rgb(242, 94, 67);
-    }
+.grid-con-3 .grid-num {
+    color: rgb(242, 94, 67);
+}
 
-    .user-info {
-        display: flex;
-        align-items: center;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #ccc;
-        margin-bottom: 20px;
-    }
+.user-info {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 20px;
+}
 
-    .user-avator {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-    }
+.user-avator {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
 
-    .user-info-cont {
-        padding-left: 50px;
-        flex: 1;
-        font-size: 14px;
-        color: #999;
-    }
+.user-info-cont {
+    padding-left: 50px;
+    flex: 1;
+    font-size: 14px;
+    color: #999;
+}
 
-    .user-info-cont div:first-child {
-        font-size: 30px;
-        color: #222;
-    }
+.user-info-cont div:first-child {
+    font-size: 30px;
+    color: #222;
+}
 
-    .user-info-list {
-        font-size: 14px;
-        color: #999;
-        line-height: 25px;
-    }
+.user-info-list {
+    font-size: 14px;
+    color: #999;
+    line-height: 25px;
+}
 
-    .user-info-list span {
-        margin-left: 50px;
-    }
+.user-info-list span {
+    margin-left: 50px;
+}
 
-    .mgb20 {
-        margin-bottom: 20px;
-    }
+.mgb20 {
+    margin-bottom: 20px;
+}
 
-    .todo-item {
-        font-size: 14px;
-    }
+.todo-item {
+    font-size: 14px;
+}
 
-    .todo-item-del {
-        text-decoration: line-through;
-        color: #999;
-    }
+.todo-item-del {
+    text-decoration: line-through;
+    color: #999;
+}
 
 </style>
